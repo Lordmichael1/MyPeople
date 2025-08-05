@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, User, Moon, Sun, Menu, LogOut } from 'lucide-react';
+import { Plus, BookUser, Moon, Sun, Menu, LogOut } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useTheme } from '../../contexts/ThemeContext';
 import { signOut } from 'firebase/auth';
@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ onAddContact, onToggleSidebar, i
               <Menu size={20} />
             </button>
             <div className="w-8 h-8 bg-blue-600 dark:bg-blue-700 rounded-lg flex items-center justify-center">
-              <User className="text-white" size={20} />
+              <BookUser className="text-white" size={20} />
             </div>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               <span className="hidden sm:inline">MyPeople</span>
