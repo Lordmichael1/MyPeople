@@ -1,5 +1,3 @@
-// src/types.ts
-
 export type TabId = 'dashboard' | 'contacts' | 'active' | 'inactive';
 
 export type Contact = {

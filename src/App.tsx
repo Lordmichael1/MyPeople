@@ -19,6 +19,7 @@ import { Dashboard } from './components/pages/Dashboard';
 import { ContactsView } from './components/pages/ContactsView';
 import { Modal } from './components/ui/Modal';
 import { ContactForm } from './components/features/ContactForm';
+import LoadingPage from './components/LoadingSpinner'; 
 
 function ContactManagerApp() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -28,6 +29,7 @@ function ContactManagerApp() {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // ✅ Added loading state
 
   // Get the current user ID
   useEffect(() => {
@@ -37,6 +39,7 @@ function ContactManagerApp() {
       } else {
         setUserId(null);
       }
+      setLoading(false); // ✅ Stop loading after auth check
     });
 
     return () => unsubscribeAuth();
@@ -113,6 +116,11 @@ function ContactManagerApp() {
   const closeSidebar = () => {
     setIsSidebarOpen(false);
   };
+
+  // ✅ Show loading screen before app loads
+  if (loading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">

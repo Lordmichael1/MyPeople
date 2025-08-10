@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { Navigate } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
 export function PrivateRoute({ children }: { children: JSX.Element }) {
   const [user, setUser] = useState<any>(null);
@@ -15,7 +16,9 @@ export function PrivateRoute({ children }: { children: JSX.Element }) {
     return unsub;
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white">
+          <LoadingSpinner />
+        </div>;
 
   return user ? children : <Navigate to="/login" />;
 }

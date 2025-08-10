@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LoadingSpinner from "../LoadingSpinner";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -13,6 +14,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [resetMessage, setResetMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isLoadingSignup, setIsLoadingSignup] = useState(false);
+
   const navigate = useNavigate();
 
   const getLoginErrorMessage = (code: string): string => {
@@ -35,20 +39,31 @@ export default function Login() {
     }
   };
 
+  const handleSignupClick = () => {
+    setIsLoadingSignup(true);
+    setTimeout(() => {
+      navigate("/signup");
+    }, 500);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     setResetMessage("");
+    setLoading(true);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setSuccess("Login successful! Redirecting...");
-      setTimeout(() => navigate("/dashboard"), 2000);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     } catch (err) {
       const error = err as FirebaseError;
-      const message = getLoginErrorMessage(error.code);
-      setError(message);
+      setError(getLoginErrorMessage(error.code));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,74 +77,86 @@ export default function Login() {
       return;
     }
 
+    setLoading(true);
     try {
       await sendPasswordResetEmail(auth, email);
       setResetMessage("Password reset email sent. Check your inbox.");
     } catch (err) {
       const error = err as FirebaseError;
-      const message = getLoginErrorMessage(error.code);
-      setError(message);
+      setError(getLoginErrorMessage(error.code));
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Fullscreen loader on login or signup navigation
+  if (loading || isLoadingSignup) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-6 rounded shadow w-full max-w-sm"
-      >
-        <h2 className="text-xl font-bold mb-4">Login</h2>
-
-        {/* Error, success, and reset messages */}
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-        {success && <p className="text-green-500 text-sm mb-3">{success}</p>}
-        {resetMessage && <p className="text-blue-600 text-sm mb-3">{resetMessage}</p>}
-
-        {/* Email Input */}
-        <input
-          className="w-full mb-3 p-2 border rounded"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        {/* Password Input */}
-        <input
-          className="w-full mb-3 p-2 border rounded"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        {/* Login Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition"
+      <div className="w-full max-w-sm">
+        <form
+          onSubmit={handleLogin}
+          className="bg-white p-6 rounded shadow w-full"
         >
-          Login
-        </button>
+          <h2 className="text-xl font-bold mb-4">Login</h2>
 
-        {/* Forgot Password */}
-        <button
-          type="button"
-          onClick={handleResetPassword}
-          className="w-full mt-2 text-blue-600 hover:underline text-sm"
-        >
-          Forgot Password?
-        </button>
+          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+          {success && <p className="text-green-500 text-sm mb-3">{success}</p>}
+          {resetMessage && (
+            <p className="text-blue-600 text-sm mb-3">{resetMessage}</p>
+          )}
 
-        {/* Sign Up Link */}
-        <p className="mt-2 text-sm">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-blue-500 underline">
-            Sign up
-          </a>
-        </p>
-      </form>
+          <input
+            className="w-full mb-3 p-2 border rounded"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            className="w-full mb-3 p-2 border rounded"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition"
+          >
+            Login
+          </button>
+
+          <button
+            type="button"
+            onClick={handleResetPassword}
+            className="w-full mt-2 text-blue-600 hover:underline text-sm"
+          >
+            Forgot Password?
+          </button>
+
+          <p className="mt-2 text-sm">
+            Don’t have an account?{" "}
+            <button
+              onClick={handleSignupClick}
+              className="text-blue-500 underline"
+            >
+              Sign up
+            </button>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
