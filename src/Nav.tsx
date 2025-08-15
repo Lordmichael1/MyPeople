@@ -7,6 +7,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 const App = lazy(() => import("./App"));
 const Login = lazy(() => import("./components/pages/Login"));
 const Signup = lazy(() => import("./components/pages/Signup"));
+const LandingPage = lazy(() => import("./components/pages/LandingPage"));
 
 export default function Nav() {
   return (
@@ -19,7 +20,7 @@ export default function Nav() {
         }
       >
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route
